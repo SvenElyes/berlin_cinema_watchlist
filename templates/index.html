@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Berlin Rerelease Finder</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      background: #111;
+      color: #eee;
+    }
+    h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+    .subtitle { color: #999; font-size: 0.9rem; margin-bottom: 2rem; }
+    .film {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #333;
+    }
+    .film img {
+      width: 70px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .film-title { font-size: 1.05rem; font-weight: 600; }
+    .film-title a { color: #eee; text-decoration: none; }
+    .film-title a:hover { text-decoration: underline; }
+    .year { color: #888; font-weight: 400; }
+    .showings { margin-top: 0.4rem; font-size: 0.9rem; color: #ccc; }
+    .showings div { margin: 0.15rem 0; }
+    .watchlist-note { font-size: 0.8rem; color: #777; margin-top: 0.3rem; }
+    .empty { color: #999; padding: 2rem 0; }
+  </style>
+</head>
+<body>
+  <h1>🎬 Berlin Rerelease Finder</h1>
+  <p class="subtitle">
+    {{ total_showing }} films currently showing &middot;
+    {{ total_old }} are pre-{{ today[:4] }} (old enough) &middot;
+    {{ total_watchlist }} on your Letterboxd watchlist &middot;
+    {{ results|length }} matches
+  </p>
+
+  {% if results %}
+    {% for r in results %}
+      <div class="film">
+        {% if r.poster_url %}
+          <img src="{{ r.poster_url }}" alt="">
+        {% endif %}
+        <div>
+          <div class="film-title">
+            {% if r.info_url %}<a href="{{ r.info_url }}" target="_blank">{{ r.title }}</a>{% else %}{{ r.title }}{% endif %}
+            <span class="year">({{ r.year }})</span>
+          </div>
+          <div class="watchlist-note">
+            on your watchlist as
+            {% if r.watchlist_url %}<a href="{{ r.watchlist_url }}" target="_blank" style="color:#888;">{{ r.watchlist_title }}</a>{% else %}{{ r.watchlist_title }}{% endif %}
+          </div>
+          <div class="showings">
+            {% for s in r.showings %}
+              <div>{{ s.date }} &middot; {{ s.time }} &middot; {{ s.cinema }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="empty">No matches right now. Check back later — the cinema listing refreshes every ~6 hours.</p>
+  {% endif %}
+</body>
+</html>
